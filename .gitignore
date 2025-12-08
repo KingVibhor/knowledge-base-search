@@ -3,3 +3,16 @@ __pycache__/
 chroma_db/
 data/docs/
 *.pyc
+
+# Virtual environment
+.venv/
+
+# Editor and OS files
+.vscode/
+.idea/
+.DS_Store
+
+# Build / distribution
+dist/
+build/
+pip-wheel-metadata/
