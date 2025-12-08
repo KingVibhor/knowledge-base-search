@@ -1,8 +1,10 @@
 fastapi
-uvicorn
-pypdf
+uvicorn[standard]
 chromadb
-sentence-transformers
-python-dotenv
+pdfplumber
+python-docx
+pdf2image
+pytesseract
+Pillow
 google-generativeai
-
+python-dotenv

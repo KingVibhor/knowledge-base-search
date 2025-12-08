@@ -1,52 +1,145 @@
 <!DOCTYPE html>
-<html>
-  <body>
-    <h2>Knowledge Base RAG Engine</h2>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Knowledge Base RAG Engine</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f4f6f8;
+            padding: 40px;
+            display: flex;
+            justify-content: center;
+        }
 
-    <h3>Upload Document</h3>
-    <input type="file" id="fileInput" />
-    <button onclick="uploadDoc()">Upload</button>
-    <pre id="uploadStatus"></pre>
+        .container {
+            width: 600px;
+            background: white;
+            padding: 30px;
+            border-radius: 14px;
+            box-shadow: 0px 8px 25px rgba(0,0,0,0.08);
+        }
 
-    <h3>Ask a Question</h3>
-    <textarea id="query" rows="3" cols="60"></textarea><br>
-    <button onclick="ask()">Ask</button>
+        h1 {
+            text-align: center;
+            margin-bottom: 20px;
+            color: #333;
+        }
 
-    <h3>Answer</h3>
-    <pre id="answer"></pre>
+        .section-title {
+            margin-top: 25px;
+            font-weight: bold;
+            color: #444;
+        }
 
-    <h3>Sources</h3>
-    <pre id="sources"></pre>
+        .input-box, .answer-box {
+            width: 100%;
+            margin-top: 10px;
+            padding: 12px;
+            border-radius: 8px;
+            border: 1px solid #bbb;
+            background: #fafafa;
+            resize: none;
+        }
 
-    <script>
-      async function uploadDoc() {
-        const file = document.getElementById("fileInput").files[0];
-        const fd = new FormData();
-        fd.append("file", file);
+        button {
+            margin-top: 15px;
+            width: 100%;
+            padding: 12px;
+            background: #4A90E2;
+            border: none;
+            border-radius: 8px;
+            color: white;
+            font-size: 16px;
+            cursor: pointer;
+        }
 
-        const res = await fetch("http://localhost:8000/ingest", {
-          method: "POST",
-          body: fd
+        button:hover {
+            background: #357ABD;
+        }
+
+        .sources {
+            margin-top: 15px;
+            padding: 10px;
+            background: #eef3ff;
+            border-radius: 8px;
+            border-left: 4px solid #4A90E2;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+
+    <h1>Knowledge Base RAG Engine</h1>
+
+    <!-- Upload Section -->
+    <div>
+        <p class="section-title">Upload Document</p>
+        <input type="file" id="fileInput" class="input-box">
+        <button onclick="uploadFile()">Upload</button>
+        <pre id="uploadResult"></pre>
+    </div>
+
+    <!-- Query Section -->
+    <div>
+        <p class="section-title">Ask a Question</p>
+        <textarea id="question" rows="3" class="input-box"></textarea>
+        <button onclick="ask()">Ask</button>
+
+        <p class="section-title">Answer</p>
+        <div id="answerBox" class="answer-box"></div>
+
+        <p class="section-title">Sources</p>
+        <div id="sourcesBox" class="sources"></div>
+    </div>
+
+</div>
+
+
+<script>
+    async function uploadFile() {
+        let file = document.getElementById("fileInput").files[0];
+        if (!file) {
+            alert("Select a file first.");
+            return;
+        }
+
+        let formData = new FormData();
+        formData.append("file", file);
+
+        let res = await fetch("http://127.0.0.1:8000/ingest", {
+            method: "POST",
+            body: formData
         });
 
-        document.getElementById("uploadStatus").innerText =
-          JSON.stringify(await res.json(), null, 2);
-      }
+        document.getElementById("uploadResult").textContent =
+            JSON.stringify(await res.json(), null, 2);
+    }
 
-      async function ask() {
-        const fd = new FormData();
-        fd.append("query", document.getElementById("query").value);
 
-        const res = await fetch("http://localhost:8000/query", {
-          method: "POST",
-          body: fd
+    async function ask() {
+        let question = document.getElementById("question").value;
+
+        let formData = new FormData();
+        formData.append("query", question);
+
+        let res = await fetch("http://127.0.0.1:8000/query", {
+            method: "POST",
+            body: formData
         });
 
-        const data = await res.json();
-        document.getElementById("answer").innerText = data.answer;
-        document.getElementById("sources").innerText =
-          JSON.stringify(data.sources, null, 2);
-      }
-    </script>
-  </body>
+        let data = await res.json();
+
+        document.getElementById("answerBox").textContent = data.answer;
+
+        document.getElementById("sourcesBox").innerHTML =
+            data.sources.map(s =>
+                `<b>${s.source} (chunk ${s.chunk_index})</b><br>${s.text}<br><br>`
+            ).join("");
+    }
+</script>
+
+</body>
 </html>

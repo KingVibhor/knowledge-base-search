@@ -1,16 +1,29 @@
-from sentence_transformers import SentenceTransformer
+import google.generativeai as genai
+import os
+from dotenv import load_dotenv
 
-_model = None
+load_dotenv()
 
-def get_model():
-    global _model
-    if _model is None:
-        _model = SentenceTransformer("all-MiniLM-L6-v2")
-    return _model
+API_KEY = os.getenv("GEMINI_API_KEY")
+if not API_KEY:
+    raise ValueError("GEMINI_API_KEY missing in .env")
 
-def embed_texts(texts: list[str]) -> list[list[float]]:
-    model = get_model()
-    return model.encode(texts, convert_to_numpy=True).tolist()
+genai.configure(api_key=API_KEY)
 
-def embed_text(text: str) -> list[float]:
-    return embed_texts([text])[0]
+EMBED_MODEL = "models/text-embedding-004"
+
+
+def embed_text(text: str):
+    resp = genai.embed_content(
+        model=EMBED_MODEL,
+        content=text
+    )
+    return resp["embedding"]
+
+
+def embed_texts(texts: list[str]):
+    resp = genai.embed_content(
+        model=EMBED_MODEL,
+        content=texts
+    )
+    return resp["embedding"]

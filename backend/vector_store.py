@@ -1,47 +1,62 @@
-try:
-    import chromadb
-    from chromadb.config import Settings
+import os
+from typing import List, Dict
 
-    _client = chromadb.Client(Settings(
-        chroma_db_impl="duckdb+parquet",
-        persist_directory="chroma_db"
-    ))
+import chromadb
+from .embeddings import embed_text, embed_texts
 
-    _collection = _client.get_or_create_collection(
-        name="kb_docs",
-        metadata={"hnsw:space": "cosine"}
+# Directory for persistent DB
+DB_DIR = "data/vectorstore"
+os.makedirs(DB_DIR, exist_ok=True)
+
+# Create Chroma client
+_client = chromadb.PersistentClient(path=DB_DIR)
+
+# Always use this collection
+_collection = _client.get_or_create_collection(
+    name="kb_docs",
+    metadata={"hnsw:space": "cosine"},
+)
+
+
+def add_documents(documents: List[str], metadatas: List[Dict], ids: List[str]) -> None:
+    """Add text chunks + metadata + ids into ChromaDB."""
+
+    if not documents:
+        print("[WARN] add_documents called with 0 documents")
+        return
+
+    embeddings = embed_texts(documents)
+
+    print(f"[INFO] ADDING DOCS: {len(documents)}")
+
+    _collection.add(
+        documents=documents,
+        metadatas=metadatas,
+        ids=ids,
+        embeddings=embeddings,
     )
 
-    def add_documents(documents: list[str], metadatas: list[dict], ids: list[str]):
-        _collection.add(
-            documents=documents,
-            metadatas=metadatas,
-            ids=ids
-        )
-        _client.persist()
 
-    def query_documents(query: str, n_results: int = 5):
-        result = _collection.query(
-            query_texts=[query],
-            n_results=n_results
-        )
-        docs = result["documents"][0]
-        metas = result["metadatas"][0]
-        ids = result["ids"][0]
+def query_documents(query: str, top_k: int = 5):
+    """Retrieve top K chunks for a given user query."""
 
-        return list(zip(ids, docs, metas))
-except Exception:
-    # Fallback in-memory store for development when chromadb isn't installable
-    _in_memory_store: list[tuple[str, str, dict]] = []
+    emb = embed_text(query)
 
-    def add_documents(documents: list[str], metadatas: list[dict], ids: list[str]):
-        for _id, doc, meta in zip(ids, documents, metadatas):
-            _in_memory_store.append((_id, doc, meta))
+    results = _collection.query(
+        query_embeddings=[emb],
+        n_results=top_k,
+        include=["documents", "metadatas"]
+    )
 
-    def query_documents(query: str, n_results: int = 5):
-        q = query.lower()
-        matches: list[tuple[str, str, dict]] = []
-        for _id, doc, meta in _in_memory_store:
-            if q in doc.lower():
-                matches.append((_id, doc, meta))
-        return matches[:n_results]
+    docs = results["documents"][0] if results["documents"] else []
+    metas = results["metadatas"][0] if results["metadatas"] else []
+
+    combined = []
+    for text, meta in zip(docs, metas):
+        combined.append({
+            "text": text,
+            "source": meta.get("source"),
+            "chunk_index": meta.get("chunk_index"),
+        })
+
+    return combined
