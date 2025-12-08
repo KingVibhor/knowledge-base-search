@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+  <body>
+    <h2>Knowledge Base RAG Engine</h2>
+
+    <h3>Upload Document</h3>
+    <input type="file" id="fileInput" />
+    <button onclick="uploadDoc()">Upload</button>
+    <pre id="uploadStatus"></pre>
+
+    <h3>Ask a Question</h3>
+    <textarea id="query" rows="3" cols="60"></textarea><br>
+    <button onclick="ask()">Ask</button>
+
+    <h3>Answer</h3>
+    <pre id="answer"></pre>
+
+    <h3>Sources</h3>
+    <pre id="sources"></pre>
+
+    <script>
+      async function uploadDoc() {
+        const file = document.getElementById("fileInput").files[0];
+        const fd = new FormData();
+        fd.append("file", file);
+
+        const res = await fetch("http://localhost:8000/ingest", {
+          method: "POST",
+          body: fd
+        });
+
+        document.getElementById("uploadStatus").innerText =
+          JSON.stringify(await res.json(), null, 2);
+      }
+
+      async function ask() {
+        const fd = new FormData();
+        fd.append("query", document.getElementById("query").value);
+
+        const res = await fetch("http://localhost:8000/query", {
+          method: "POST",
+          body: fd
+        });
+
+        const data = await res.json();
+        document.getElementById("answer").innerText = data.answer;
+        document.getElementById("sources").innerText =
+          JSON.stringify(data.sources, null, 2);
+      }
+    </script>
+  </body>
+</html>
