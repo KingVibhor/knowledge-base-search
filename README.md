@@ -154,6 +154,9 @@ UI shows:
 - Add Docker support
 
 ---
+##  Project Demo (Click to Watch)
+[[Video]](https://github.com/KingVibhor/knowledge-base-search/releases/tag/v1.0-video)
+---
 
 ## License
 MIT License
