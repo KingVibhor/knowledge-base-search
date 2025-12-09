@@ -44,7 +44,7 @@ This project is designed to be simple, fast, and easy to extend.
 
 ---
 
-## 📁 Project Structure
+## Project Structure
 
 ```
 knowledge-based-rag/
@@ -75,16 +75,10 @@ Your system must use **Python 3.10** because newer Python versions break several
 cd knowledge-based-rag
 python -m venv .venv
 
-makefile
-Copy code
-
 Activate:
-
 Windows (PowerShell):
 .venv\Scripts\activate
 
-shell
-Copy code
 
 ### 3️ Install dependencies
 pip install -r requirements.txt
@@ -123,7 +117,7 @@ cd frontend
 python -m http.server 5500
 
 Visit:
-http://127.0.0.1:5500/index.html
+http://127.0.0.1:5500/simple_client.html
 
 ---
 

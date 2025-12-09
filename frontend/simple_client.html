@@ -5,69 +5,59 @@
     <title>Knowledge Base RAG Engine</title>
     <style>
         body {
-            font-family: Arial, sans-serif;
-            background: #f4f6f8;
-            padding: 40px;
-            display: flex;
-            justify-content: center;
+        font-family: Arial, sans-serif;
+        max-width: 900px;
+        margin: auto;
+        padding: 20px;
         }
 
         .container {
-            width: 600px;
-            background: white;
-            padding: 30px;
-            border-radius: 14px;
-            box-shadow: 0px 8px 25px rgba(0,0,0,0.08);
+        border: 1px solid #ddd;
+        padding: 20px;
+        border-radius: 10px;
+        background: #fff;
         }
 
-        h1 {
-            text-align: center;
-            margin-bottom: 20px;
-            color: #333;
-        }
-
-        .section-title {
-            margin-top: 25px;
-            font-weight: bold;
-            color: #444;
-        }
-
-        .input-box, .answer-box {
-            width: 100%;
-            margin-top: 10px;
-            padding: 12px;
-            border-radius: 8px;
-            border: 1px solid #bbb;
-            background: #fafafa;
-            resize: none;
+        textarea, input, button {
+        width: 100%;
+        padding: 12px;
+        margin-top: 8px;
+        border-radius: 6px;
+        border: 1px solid #aaa;
         }
 
         button {
-            margin-top: 15px;
-            width: 100%;
-            padding: 12px;
-            background: #4A90E2;
-            border: none;
-            border-radius: 8px;
-            color: white;
-            font-size: 16px;
-            cursor: pointer;
+        background: #1e88e5;
+        color: white;
+        font-size: 16px;
+        cursor: pointer;
+        border: none;
         }
 
         button:hover {
-            background: #357ABD;
+        background: #1565c0;
         }
 
-        .sources {
-            margin-top: 15px;
-            padding: 10px;
-            background: #eef3ff;
-            border-radius: 8px;
-            border-left: 4px solid #4A90E2;
-            font-size: 14px;
+        .answer-box {
+        white-space: pre-wrap;      
+        overflow-wrap: break-word;  
+        border: 1px solid #ccc;
+        padding: 15px;
+        background: #f8f9fa;
+        border-radius: 8px;
+        margin-top: 10px;
         }
-    </style>
+
+        .source-box {
+        border: 1px solid #ccc;
+        padding: 12px;
+        background: #f0f0f0;
+        border-radius: 6px;
+        margin-top: 10px;
+        }
+        </style>
 </head>
+<script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
 <body>
 
 <div class="container">
@@ -120,25 +110,27 @@
 
 
     async function ask() {
-        let question = document.getElementById("question").value;
+    let question = document.getElementById("question").value;
 
-        let formData = new FormData();
-        formData.append("query", question);
+    let formData = new FormData();
+    formData.append("query", question);
 
-        let res = await fetch("http://127.0.0.1:8000/query", {
-            method: "POST",
-            body: formData
-        });
+    let res = await fetch("http://127.0.0.1:8000/query", {
+        method: "POST",
+        body: formData
+    });
 
-        let data = await res.json();
+    let data = await res.json();
 
-        document.getElementById("answerBox").textContent = data.answer;
 
-        document.getElementById("sourcesBox").innerHTML =
-            data.sources.map(s =>
-                `<b>${s.source} (chunk ${s.chunk_index})</b><br>${s.text}<br><br>`
-            ).join("");
+    document.getElementById("answerBox").innerHTML = marked.parse(data.answer);
+
+    document.getElementById("sourcesBox").innerHTML =
+        data.sources.map(s =>
+            `<b>${s.source} (chunk ${s.chunk_index})</b><br>${s.text}<br><br>`
+        ).join("");
     }
+
 </script>
 
 </body>
