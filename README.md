@@ -68,10 +68,10 @@ knowledge-based-rag/
 
 ## Installation & Setup
 
-### 1️ **Install Python 3.10**  
+### 1️) **Install Python 3.10**  
 Your system must use **Python 3.10** because newer Python versions break several dependencies.
 
-### 2️ Create a virtual environment
+### 2️) Create a virtual environment
 cd knowledge-based-rag
 python -m venv .venv
 
@@ -80,11 +80,11 @@ Windows (PowerShell):
 .venv\Scripts\activate
 
 
-### 3️ Install dependencies
+### 3️) Install dependencies
 pip install -r requirements.txt
 
 
-### 4️ Install Tesseract (for image-only PDFs)
+### 4️) Install Tesseract (for image-only PDFs)
 Windows:
 - Download: https://github.com/UB-Mannheim/tesseract/wiki
 - Install
@@ -94,7 +94,7 @@ C:\Program Files\Tesseract-OCR\
 Verify:
 tesseract --version
 
-### 5️ Set your Gemini API key
+### 5️) Set your Gemini API key
 set GEMINI_API_KEY "YOUR_KEY"
 
 OR create `.env` with:
@@ -114,6 +114,7 @@ http://127.0.0.1:8000
 ##  Run Frontend
 
 cd frontend
+
 python -m http.server 5500
 
 Visit:
