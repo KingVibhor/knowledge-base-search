@@ -22,8 +22,15 @@ app.add_middleware(
 UPLOAD_DIR = "data/docs"
 os.makedirs(UPLOAD_DIR, exist_ok=True)
 
+@app.get("/")
+def root():
+    return {"message": "RAG backend is running"}
 
-# OPTIONS handler for browsers
+
+@app.get("/favicon.ico")
+def favicon():
+    return Response(status_code=204)
+
 @app.options("/{path:path}")
 async def preflight_handler(path: str):
     headers = {
