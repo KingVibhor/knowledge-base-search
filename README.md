@@ -10,7 +10,7 @@ This project is designed to be simple, fast, and easy to extend.
 
 ---
 
-## 🚀 Features
+## Features
 
 - Upload PDFs, DOCX, TXT, and Images
 - Text extraction + OCR fallback (pdfplumber + Tesseract)
@@ -24,7 +24,7 @@ This project is designed to be simple, fast, and easy to extend.
 
 ---
 
-## 🧩 Tech Stack
+## Tech Stack
 
 ### **Backend**
 - Python 3.10
@@ -46,35 +46,32 @@ This project is designed to be simple, fast, and easy to extend.
 
 ## 📁 Project Structure
 
+```
 knowledge-based-rag/
 │
 ├── backend/
-│ ├── app.py # FastAPI server + routes
-│ ├── embeddings.py # Gemini embedding functions
-│ ├── vector_store.py # ChromaDB setup + CRUD
-│ ├── rag_pipeline.py # Extraction, chunking, ingestion
-│ ├── llm_client.py # Gemini answer synthesis
+│   ├── app.py               # FastAPI server + routes
+│   ├── embeddings.py        # Gemini embedding functions
+│   ├── vector_store.py      # ChromaDB setup + CRUD
+│   ├── rag_pipeline.py      # Extraction, chunking, ingestion
+│   ├── llm_client.py        # Gemini answer synthesis
 │
 ├── frontend/
-│ ├── index.html # Main UI
+│   └── index.html           # Main UI
 │
 ├── data/
-│ ├── docs/ # Uploaded documents
-│ ├── vectorstore/ # ChromaDB persistent DB
+│   ├── docs/                # Uploaded documents
+│   └── vectorstore/         # ChromaDB persistent DB
 │
 └── README.md
+```
 
-yaml
-Copy code
+## Installation & Setup
 
----
-
-## ⚙️ Installation & Setup
-
-### 1️⃣ **Install Python 3.10**  
+### 1️ **Install Python 3.10**  
 Your system must use **Python 3.10** because newer Python versions break several dependencies.
 
-### 2️⃣ Create a virtual environment
+### 2️ Create a virtual environment
 cd knowledge-based-rag
 python -m venv .venv
 
@@ -89,75 +86,48 @@ Windows (PowerShell):
 shell
 Copy code
 
-### 3️⃣ Install dependencies
+### 3️ Install dependencies
 pip install -r requirements.txt
 
-markdown
-Copy code
 
-### 4️⃣ Install Tesseract (for image-only PDFs)
+### 4️ Install Tesseract (for image-only PDFs)
 Windows:
 - Download: https://github.com/UB-Mannheim/tesseract/wiki
 - Install
 - Add to PATH:
 C:\Program Files\Tesseract-OCR\
 
-makefile
-Copy code
-
 Verify:
 tesseract --version
 
-makefile
-Copy code
-
-### 5️⃣ Set your Gemini API key
-PowerShell:
-setx GEMINI_API_KEY "YOUR_KEY"
-
-sql
-Copy code
+### 5️ Set your Gemini API key
+set GEMINI_API_KEY "YOUR_KEY"
 
 OR create `.env` with:
 GEMINI_API_KEY=YOUR_KEY
 
-yaml
-Copy code
-
 ---
 
-## ▶️ Run Backend
+##  Run Backend
 
 uvicorn backend.app:app --reload
-
-nginx
-Copy code
 
 Backend runs on:
 http://127.0.0.1:8000
 
-yaml
-Copy code
-
 ---
 
-## ▶️ Run Frontend
+##  Run Frontend
 
 cd frontend
 python -m http.server 5500
 
-makefile
-Copy code
-
 Visit:
 http://127.0.0.1:5500/index.html
 
-yaml
-Copy code
-
 ---
 
-## 🧪 Usage Flow
+## Usage Flow
 
 ### 1. Upload Document  
 Click **Upload**, select a PDF/DOCX/TXT/Image → backend extracts text → chunks → embeds → stores.
@@ -173,7 +143,7 @@ UI shows:
 
 ---
 
-## 🔥 Notes
+## Notes
 
 - Works well with real-world messy PDFs.
 - Supports OCR auto fallback for scanned/image-only files.
@@ -182,7 +152,7 @@ UI shows:
 
 ---
 
-## 🧩 Future Improvements
+## Future Improvements
 - Support multiple collection namespaces
 - Add UI for viewing ingested documents
 - Add PDF preview before ingestion
@@ -190,5 +160,5 @@ UI shows:
 
 ---
 
-## 🏁 License
+## License
 MIT License
