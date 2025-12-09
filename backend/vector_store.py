@@ -17,6 +17,25 @@ _collection = _client.get_or_create_collection(
     metadata={"hnsw:space": "cosine"},
 )
 
+def clear_collection():
+    """Fully reset the ChromaDB collection before adding new docs."""
+    global _collection, _client
+
+    print("[INFO] Resetting ChromaDB collection...")
+
+    # Delete entire collection
+    try:
+        _client.delete_collection("kb_docs")
+    except:
+        pass  # collection may not exist yet
+
+    # Recreate fresh collection
+    _collection = _client.get_or_create_collection(
+        name="kb_docs",
+        metadata={"hnsw:space": "cosine"},
+    )
+
+
 
 def add_documents(documents: List[str], metadatas: List[Dict], ids: List[str]) -> None:
     """Add text chunks + metadata + ids into ChromaDB."""

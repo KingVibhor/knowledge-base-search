@@ -6,7 +6,7 @@ import docx
 from pdf2image import convert_from_path
 import pytesseract
 
-from .vector_store import add_documents, query_documents
+from .vector_store import add_documents, query_documents, clear_collection
 
 
 # ---------- TEXT EXTRACTION ---------- #
@@ -88,6 +88,7 @@ def chunk_text(text: str, chunk_size: int = 500) -> List[str]:
 # ---------- INGESTION ---------- #
 
 def ingest_document(path: str, filename: str) -> None:
+    clear_collection()
     text = extract_text(path)
 
     if not text.strip():

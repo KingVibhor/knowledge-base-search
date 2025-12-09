@@ -51,35 +51,22 @@ async def query_api(query: str = Form(...)):
     if not retrieved:
         return {"answer": "No relevant information found.", "sources": []}
 
-    # -----------------------------
-    # DEDUPLICATE SOURCES
-    # -----------------------------
-    unique = {}
-    for item in retrieved:
-        key = (item["source"], item["chunk_index"])
-        if key not in unique:
-            # Trim long text for readability
-            txt = item["text"]
-            if len(txt) > 300:
-                txt = txt[:300] + "..."
-            unique[key] = {
-                "source": item["source"],
-                "chunk_index": item["chunk_index"],
-                "text": txt
-            }
+    # FIXED — retrieved is already a list of dicts
+    context_chunks = [item["text"] for item in retrieved]
 
-    clean_sources = list(unique.values())
+    # Pass proper list of text chunks to Gemini
+    answer = synthesize_answer(query, context_chunks)
 
-    # -----------------------------
-    # LLM ANSWER GENERATION
-    # -----------------------------
-    answer = synthesize_answer(
-        query,
-        [src["text"] for src in clean_sources]  # send deduped chunks
-    )
+    # Format sources cleanly
+    sources = [
+        {
+            "source": item["source"],
+            "chunk_index": item["chunk_index"],
+            "text": item["text"]
+        }
+        for item in retrieved
+    ]
 
-    return {
-        "answer": answer,
-        "sources": clean_sources
-    }
+    return {"answer": answer, "sources": sources}
+
 
